@@ -3,11 +3,13 @@ package io.github.parkwoong.demo;
 import static org.junit.jupiter.api.Assertions.*;
 
 import io.github.parkwoong.demo.spec.util.TokenUtils;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 import org.junit.jupiter.api.Test;
 
+import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.util.Base64;
 import java.util.Date;
@@ -26,7 +28,7 @@ class TokenUtilsTest {
                         .setExpiration(new Date(System.currentTimeMillis() + 60000))
                         .signWith(SignatureAlgorithm.HS256, key)
                         .compact();
-        var claims = TokenUtils.parseJWTClaims(token, "unused-for-hmac", secret);
+        Claims claims = TokenUtils.parseJWTClaims(token, "unused-for-hmac", secret);
         assertNotNull(claims);
         assertTrue(TokenUtils.isValidType(claims, "Bearer"));
         assertTrue(TokenUtils.isNotExpired(claims, new Date()));
@@ -51,9 +53,9 @@ class TokenUtilsTest {
 
     @Test
     void originalRsaBranch() throws Exception {
-        var generator = KeyPairGenerator.getInstance("RSA");
+        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
         generator.initialize(2048);
-        var pair = generator.generateKeyPair();
+        KeyPair pair = generator.generateKeyPair();
         String token =
                 Jwts.builder()
                         .setSubject("sample-user")
